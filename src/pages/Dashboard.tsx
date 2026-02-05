@@ -82,7 +82,7 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 space-y-6">
-        <AttendanceStats records={records} />
+        <AttendanceStats records={records} subjects={subjects} />
         
         <div className="grid lg:grid-cols-2 gap-6">
           <TimetableManager subjects={subjects} onSubjectsChange={fetchData} />
