@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AttendanceStats } from '@/components/attendance/AttendanceStats';
 import { TimetableManager } from '@/components/attendance/TimetableManager';
 import { AttendanceMarker } from '@/components/attendance/AttendanceMarker';
+import { AssignmentReminder } from '@/components/attendance/AssignmentReminder';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, LogOut } from 'lucide-react';
 
@@ -23,18 +24,29 @@ interface AttendanceRecord {
   status: 'present' | 'absent' | 'canceled';
 }
 
+interface Assignment {
+  id: string;
+  subject_id: string | null;
+  title: string;
+  description: string | null;
+  due_date: string;
+  is_completed: boolean;
+}
+
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     if (!user) return;
 
-    const [subjectsRes, recordsRes] = await Promise.all([
+    const [subjectsRes, recordsRes, assignmentsRes] = await Promise.all([
       supabase.from('subjects').select('*').eq('user_id', user.id),
       supabase.from('attendance_records').select('*').eq('user_id', user.id),
+      supabase.from('assignments' as any).select('*').eq('user_id', user.id),
     ]);
 
     if (subjectsRes.data) setSubjects(subjectsRes.data);
@@ -43,6 +55,9 @@ export default function Dashboard() {
         ...r,
         status: r.status as 'present' | 'absent' | 'canceled'
       })));
+    }
+    if (assignmentsRes.data) {
+      setAssignments(assignmentsRes.data as unknown as Assignment[]);
     }
     setLoading(false);
   };
@@ -82,14 +97,23 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 space-y-6">
+        {/* Overall + Individual Subject Attendance */}
         <AttendanceStats records={records} subjects={subjects} />
-        
+
+        {/* Timetable, Attendance Marker, Assignments */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <TimetableManager subjects={subjects} onSubjectsChange={fetchData} />
-          <AttendanceMarker 
-            subjects={subjects} 
-            records={records} 
-            onRecordsChange={fetchData} 
+          <div className="space-y-6">
+            <TimetableManager subjects={subjects} onSubjectsChange={fetchData} />
+            <AssignmentReminder
+              subjects={subjects}
+              assignments={assignments}
+              onAssignmentsChange={fetchData}
+            />
+          </div>
+          <AttendanceMarker
+            subjects={subjects}
+            records={records}
+            onRecordsChange={fetchData}
           />
         </div>
       </main>
