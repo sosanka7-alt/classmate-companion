@@ -26,7 +26,21 @@ interface AttendanceStatsProps {
 }
 
 export function AttendanceStats({ records, subjects }: AttendanceStatsProps) {
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
+  const [selectedSubjectName, setSelectedSubjectName] = useState<string>('');
+
+  // Group subjects by name so "Math" on Mon + "Math" on Wed are treated as one
+  const uniqueSubjectNames = useMemo(() => {
+    const nameMap = new Map<string, { name: string; color: string; ids: string[] }>();
+    subjects.forEach(s => {
+      const existing = nameMap.get(s.name);
+      if (existing) {
+        existing.ids.push(s.id);
+      } else {
+        nameMap.set(s.name, { name: s.name, color: s.color, ids: [s.id] });
+      }
+    });
+    return Array.from(nameMap.values());
+  }, [subjects]);
 
   const overallStats = useMemo(() => {
     const present = records.filter(r => r.status === 'present').length;
@@ -38,19 +52,20 @@ export function AttendanceStats({ records, subjects }: AttendanceStatsProps) {
   }, [records]);
 
   const selectedSubjectStats = useMemo(() => {
-    if (!selectedSubjectId) return null;
-    const subject = subjects.find(s => s.id === selectedSubjectId);
-    if (!subject) return null;
+    if (!selectedSubjectName) return null;
+    const group = uniqueSubjectNames.find(g => g.name === selectedSubjectName);
+    if (!group) return null;
 
-    const subjectRecords = records.filter(r => r.subject_id === selectedSubjectId);
+    // Aggregate records across all subject IDs with this name
+    const subjectRecords = records.filter(r => group.ids.includes(r.subject_id));
     const present = subjectRecords.filter(r => r.status === 'present').length;
     const absent = subjectRecords.filter(r => r.status === 'absent').length;
     const canceled = subjectRecords.filter(r => r.status === 'canceled').length;
     const totalClasses = present + absent;
     const percentage = totalClasses > 0 ? Math.round((present / totalClasses) * 100) : 0;
 
-    return { ...subject, present, absent, canceled, totalClasses, percentage };
-  }, [records, subjects, selectedSubjectId]);
+    return { name: group.name, color: group.color, present, absent, canceled, totalClasses, percentage };
+  }, [records, uniqueSubjectNames, selectedSubjectName]);
 
   const getPercentageColor = (percentage: number) => {
     if (percentage >= 75) return 'text-success';
@@ -140,19 +155,19 @@ export function AttendanceStats({ records, subjects }: AttendanceStatsProps) {
                 <BookOpen className="w-5 h-5" />
                 Subject Attendance
               </CardTitle>
-              <Select value={selectedSubjectId} onValueChange={setSelectedSubjectId}>
+              <Select value={selectedSubjectName} onValueChange={setSelectedSubjectName}>
                 <SelectTrigger className="w-full sm:w-[220px] bg-background">
                   <SelectValue placeholder="Select a subject" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
-                  {subjects.map((subject) => (
-                    <SelectItem key={subject.id} value={subject.id}>
+                  {uniqueSubjectNames.map((group) => (
+                    <SelectItem key={group.name} value={group.name}>
                       <div className="flex items-center gap-2">
                         <div
                           className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: subject.color }}
+                          style={{ backgroundColor: group.color }}
                         />
-                        {subject.name}
+                        {group.name}
                       </div>
                     </SelectItem>
                   ))}
@@ -161,7 +176,7 @@ export function AttendanceStats({ records, subjects }: AttendanceStatsProps) {
             </div>
           </CardHeader>
           <CardContent>
-            {!selectedSubjectId ? (
+            {!selectedSubjectName ? (
               <div className="text-center py-8 text-muted-foreground">
                 <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>Select a subject to view its attendance</p>
