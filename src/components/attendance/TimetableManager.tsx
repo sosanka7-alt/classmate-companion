@@ -84,14 +84,14 @@ export function TimetableManager({ subjects, onSubjectsChange }: TimetableManage
 
   return (
     <Card className="glass-card">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="font-display flex items-center gap-2">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <CardTitle className="font-display flex items-center gap-2 text-base sm:text-lg">
           <Book className="w-5 h-5" />
           Your Timetable
         </CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="gradient-primary text-primary-foreground">
+            <Button size="sm" className="gradient-primary text-primary-foreground w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Subject
             </Button>

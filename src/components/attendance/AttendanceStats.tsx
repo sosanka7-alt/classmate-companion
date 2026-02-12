@@ -84,14 +84,14 @@ export function AttendanceStats({ records, subjects }: AttendanceStatsProps) {
       {/* Overall Stats - Always Visible */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="glass-card animate-slide-up" style={{ animationDelay: '0ms' }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
+          <CardHeader className="pb-2 p-3 sm:p-6 sm:pb-2">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1.5 sm:gap-2">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Attendance
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className={`text-3xl font-bold font-display ${getPercentageColor(overallStats.percentage)}`}>
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+            <div className={`text-2xl sm:text-3xl font-bold font-display ${getPercentageColor(overallStats.percentage)}`}>
               {overallStats.percentage}%
             </div>
             <p className="text-xs text-muted-foreground mt-1">
