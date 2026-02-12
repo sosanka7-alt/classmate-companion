@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotifications } from '@/hooks/useNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { AttendanceStats } from '@/components/attendance/AttendanceStats';
 import { TimetableManager } from '@/components/attendance/TimetableManager';
@@ -31,6 +32,7 @@ interface Assignment {
   description: string | null;
   due_date: string;
   is_completed: boolean;
+  reminder_date: string | null;
 }
 
 export default function Dashboard() {
@@ -39,6 +41,7 @@ export default function Dashboard() {
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
+  useNotifications(assignments);
 
   const fetchData = async () => {
     if (!user) return;

@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ClipboardList, Plus, Trash2, Calendar, AlertTriangle } from 'lucide-react';
+import { ClipboardList, Plus, Trash2, Calendar, AlertTriangle, Bell, BellOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -27,6 +27,7 @@ interface Assignment {
   description: string | null;
   due_date: string;
   is_completed: boolean;
+  reminder_date: string | null;
 }
 
 interface AssignmentReminderProps {
@@ -42,6 +43,7 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
   const [description, setDescription] = useState('');
   const [subjectId, setSubjectId] = useState<string>('none');
   const [dueDate, setDueDate] = useState('');
+  const [reminderDate, setReminderDate] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleAddAssignment = async (e: React.FormEvent) => {
@@ -55,6 +57,7 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
       description: description || null,
       subject_id: subjectId === 'none' ? null : subjectId,
       due_date: dueDate,
+      reminder_date: reminderDate || null,
     } as any);
 
     if (error) {
@@ -66,6 +69,7 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
       setDescription('');
       setSubjectId('none');
       setDueDate('');
+      setReminderDate('');
       onAssignmentsChange();
     }
     setLoading(false);
@@ -197,6 +201,20 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
                   required
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="reminderDate" className="flex items-center gap-2">
+                  <Bell className="w-3.5 h-3.5" />
+                  Remind Me On (optional)
+                </Label>
+                <Input
+                  id="reminderDate"
+                  type="date"
+                  value={reminderDate}
+                  onChange={(e) => setReminderDate(e.target.value)}
+                  max={dueDate || undefined}
+                />
+                <p className="text-xs text-muted-foreground">You'll get a notification on this date</p>
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Adding...' : 'Add Assignment'}
               </Button>
@@ -249,6 +267,12 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
                       {subject && (
                         <span className="text-xs px-1.5 py-0.5 rounded-full bg-secondary text-secondary-foreground">
                           {subject.name}
+                        </span>
+                      )}
+                      {assignment.reminder_date && !assignment.is_completed && (
+                        <span className="text-xs flex items-center gap-1 text-primary">
+                          <Bell className="w-3 h-3" />
+                          {format(new Date(assignment.reminder_date + 'T00:00:00'), 'MMM d')}
                         </span>
                       )}
                       <span className={cn(

@@ -21,6 +21,7 @@ export type Database = {
           due_date: string
           id: string
           is_completed: boolean
+          reminder_date: string | null
           subject_id: string | null
           title: string
           updated_at: string
@@ -32,6 +33,7 @@ export type Database = {
           due_date: string
           id?: string
           is_completed?: boolean
+          reminder_date?: string | null
           subject_id?: string | null
           title: string
           updated_at?: string
@@ -43,6 +45,7 @@ export type Database = {
           due_date?: string
           id?: string
           is_completed?: boolean
+          reminder_date?: string | null
           subject_id?: string | null
           title?: string
           updated_at?: string
