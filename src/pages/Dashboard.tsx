@@ -78,25 +78,25 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-xl sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary-foreground" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl gradient-primary flex items-center justify-center shrink-0">
+              <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="font-bold font-display text-lg">AttendEase</h1>
-              <p className="text-xs text-muted-foreground">{user?.email}</p>
+            <div className="min-w-0">
+              <h1 className="font-bold font-display text-base sm:text-lg">AttendEase</h1>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={signOut}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
+          <Button variant="outline" size="sm" onClick={signOut} className="shrink-0">
+            <LogOut className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Sign Out</span>
           </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 space-y-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Overall + Individual Subject Attendance */}
         <AttendanceStats records={records} subjects={subjects} />
 

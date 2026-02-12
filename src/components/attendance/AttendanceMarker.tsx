@@ -103,14 +103,14 @@ export function AttendanceMarker({ subjects, records, onRecordsChange }: Attenda
 
   return (
     <Card className="glass-card">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="font-display flex items-center gap-2">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <CardTitle className="font-display flex items-center gap-2 text-base sm:text-lg">
           <CalendarDays className="w-5 h-5" />
           Mark Attendance
         </CardTitle>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               <CalendarDays className="w-4 h-4 mr-2" />
               {format(selectedDate, 'MMM d, yyyy')}
             </Button>
@@ -167,45 +167,48 @@ export function AttendanceMarker({ subjects, records, onRecordsChange }: Attenda
                     )}
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 sm:gap-2">
                     <Button
                       size="sm"
                       variant={record?.status === 'present' ? 'default' : 'outline'}
                       className={cn(
-                        "flex-1",
+                        "flex-1 text-xs sm:text-sm px-2 sm:px-3",
                         record?.status === 'present' && "gradient-success border-0"
                       )}
                       onClick={() => markAttendance(subject.id, 'present')}
                       disabled={isLoading}
                     >
-                      <CheckCircle2 className="w-4 h-4 mr-1" />
-                      Present
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5 sm:mr-1 shrink-0" />
+                      <span className="hidden xs:inline">Present</span>
+                      <span className="xs:hidden">P</span>
                     </Button>
                     <Button
                       size="sm"
                       variant={record?.status === 'absent' ? 'default' : 'outline'}
                       className={cn(
-                        "flex-1",
+                        "flex-1 text-xs sm:text-sm px-2 sm:px-3",
                         record?.status === 'absent' && "bg-destructive text-destructive-foreground border-0"
                       )}
                       onClick={() => markAttendance(subject.id, 'absent')}
                       disabled={isLoading}
                     >
-                      <XCircle className="w-4 h-4 mr-1" />
-                      Absent
+                      <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5 sm:mr-1 shrink-0" />
+                      <span className="hidden xs:inline">Absent</span>
+                      <span className="xs:hidden">A</span>
                     </Button>
                     <Button
                       size="sm"
                       variant={record?.status === 'canceled' ? 'default' : 'outline'}
                       className={cn(
-                        "flex-1",
+                        "flex-1 text-xs sm:text-sm px-2 sm:px-3",
                         record?.status === 'canceled' && "bg-muted text-muted-foreground border-0"
                       )}
                       onClick={() => markAttendance(subject.id, 'canceled')}
                       disabled={isLoading}
                     >
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      Canceled
+                      <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5 sm:mr-1 shrink-0" />
+                      <span className="hidden xs:inline">Canceled</span>
+                      <span className="xs:hidden">C</span>
                     </Button>
                   </div>
                 </div>
