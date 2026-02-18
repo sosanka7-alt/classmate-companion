@@ -39,6 +39,8 @@ export function AttendanceMarker({ subjects, records, onRecordsChange }: Attenda
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState<string | null>(null);
+  // Reset overrides when date changes
+
   // Maps scheduled subject id -> replacement subject id for the current date view
   const [subjectOverrides, setSubjectOverrides] = useState<Record<string, string>>({});
   const [editingSlot, setEditingSlot] = useState<string | null>(null);
@@ -63,7 +65,7 @@ export function AttendanceMarker({ subjects, records, onRecordsChange }: Attenda
 
   const markAttendance = async (subjectId: string, status: 'present' | 'absent' | 'canceled') => {
     if (!user) return;
-    
+
     setLoading(subjectId);
     const existingRecord = getRecordForSubject(subjectId);
 
@@ -153,7 +155,7 @@ export function AttendanceMarker({ subjects, records, onRecordsChange }: Attenda
             {todaysSubjects.map((subject) => {
               const effectiveSubject = getEffectiveSubject(subject);
               const record = getRecordForSubject(effectiveSubject.id);
-              const isLoading = loading === subject.id;
+              const isLoading = loading === effectiveSubject.id;
               
               return (
                 <div

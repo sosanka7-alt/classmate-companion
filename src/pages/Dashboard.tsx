@@ -49,7 +49,7 @@ export default function Dashboard() {
     const [subjectsRes, recordsRes, assignmentsRes] = await Promise.all([
       supabase.from('subjects').select('*').eq('user_id', user.id),
       supabase.from('attendance_records').select('*').eq('user_id', user.id),
-      supabase.from('assignments' as any).select('*').eq('user_id', user.id),
+      supabase.from('assignments').select('*').eq('user_id', user.id),
     ]);
 
     if (subjectsRes.data) setSubjects(subjectsRes.data);
@@ -60,7 +60,7 @@ export default function Dashboard() {
       })));
     }
     if (assignmentsRes.data) {
-      setAssignments(assignmentsRes.data as unknown as Assignment[]);
+      setAssignments(assignmentsRes.data as Assignment[]);
     }
     setLoading(false);
   };

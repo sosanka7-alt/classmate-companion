@@ -51,14 +51,14 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
     if (!user) return;
 
     setLoading(true);
-    const { error } = await supabase.from('assignments' as any).insert({
+    const { error } = await supabase.from('assignments').insert({
       user_id: user.id,
       title,
       description: description || null,
       subject_id: subjectId === 'none' ? null : subjectId,
       due_date: dueDate,
       reminder_date: reminderDate || null,
-    } as any);
+    });
 
     if (error) {
       toast.error('Failed to add assignment');
@@ -77,8 +77,8 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
 
   const handleToggleComplete = async (id: string, isCompleted: boolean) => {
     const { error } = await supabase
-      .from('assignments' as any)
-      .update({ is_completed: !isCompleted } as any)
+      .from('assignments')
+      .update({ is_completed: !isCompleted })
       .eq('id', id);
 
     if (error) {
@@ -89,7 +89,7 @@ export function AssignmentReminder({ subjects, assignments, onAssignmentsChange 
   };
 
   const handleDeleteAssignment = async (id: string) => {
-    const { error } = await supabase.from('assignments' as any).delete().eq('id', id);
+    const { error } = await supabase.from('assignments').delete().eq('id', id);
     if (error) {
       toast.error('Failed to delete assignment');
     } else {
